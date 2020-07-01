@@ -1,0 +1,9 @@
+﻿  Pregunta3.cpp
+C:\Users\jaime\Desktop\Tarea1_Algoritmos\Pregunta3\Pregunta3\Pregunta3.cpp(10,15): warning C4244: 'return': conversión de 'double' a 'int'; posible pérdida de datos
+C:\Users\jaime\Desktop\Tarea1_Algoritmos\Pregunta3\Pregunta3\Pregunta3.cpp(155,32): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\jaime\Desktop\Tarea1_Algoritmos\Pregunta3\Pregunta3\Pregunta3.cpp(156,36): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\jaime\Desktop\Tarea1_Algoritmos\Pregunta3\Pregunta3\Pregunta3.cpp(160,32): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\jaime\Desktop\Tarea1_Algoritmos\Pregunta3\Pregunta3\Pregunta3.cpp(161,36): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\jaime\Desktop\Tarea1_Algoritmos\Pregunta3\Pregunta3\Pregunta3.cpp(169,32): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\jaime\Desktop\Tarea1_Algoritmos\Pregunta3\Pregunta3\Pregunta3.cpp(170,36): warning C4018: '<': no coinciden signed/unsigned
+  Pregunta3.vcxproj -> C:\Users\jaime\Desktop\Tarea1_Algoritmos\Pregunta3\Pregunta3\Debug\Pregunta3.exe
