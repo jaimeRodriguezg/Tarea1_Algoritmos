@@ -5,13 +5,13 @@
 #include <cstdlib>
 using namespace std;
 
-void imprimir(vector< vector<int>>& matrix, int m, int n){
+void imprimir(vector< vector<int>>& matriz, int m, int n){
     for (int i = 0; i < m; i++){
         for (int j = 0; j < n; j++){
             if (j != 0){
                 cout << "\t";
             }
-            cout << matrix[i][j];
+            cout << matriz[i][j];
         }
         cout << endl;
     }
@@ -86,13 +86,13 @@ void strassen(vector<vector<int>>& M1, vector<vector<int>>& M2, vector<vector<in
         
         sumarMatrices(A, D, aux1, dimension_2);      // A + D
         sumarMatrices(E, H, aux2, dimension_2);      // E + H
-        strassen(aux1, aux2, p5, dimension_2);    // p5 = (A+D) * (E+H)
+        strassen(aux1, aux2, p5, dimension_2);      // p5 = (A+D) * (E+H)
         
         restarMatrices(B, D, aux1, dimension_2);     // B - D
         sumarMatrices(G, H, aux2, dimension_2);      // G + H
-        strassen(aux1, aux2, p6, dimension_2);    // p6 = (B-D) * (G+H)
+        strassen(aux1, aux2, p6, dimension_2);       // p6 = (B-D) * (G+H)
        
-        restarMatrices(C, A, aux1, dimension_2);     // C - A
+        restarMatrices(A, C, aux1, dimension_2);     // A - C
         sumarMatrices(E, F, aux2, dimension_2);      // E + F
         strassen(aux1, aux2, p7, dimension_2);    // p7 = (C-A) * (E+F)
         
@@ -103,16 +103,16 @@ void strassen(vector<vector<int>>& M1, vector<vector<int>>& M2, vector<vector<in
         // Calculando M_10, M_10, M_00 e M_11:
 
         sumarMatrices(p5, p4, aux1, dimension_2);       // p5 + p4
-        sumarMatrices(p2, p6, aux2, dimension_2);       // p2 + p6
-        restarMatrices(aux1, aux2, M_00, dimension_2); // M_00 = p5 + p4 - p2 + p6
+        restarMatrices(aux1, p2, aux2, dimension_2);       // (p5 +p4) - p2
+        sumarMatrices(aux2, p6, M_00, dimension_2); // M_00 = (p5 + p4 - p2) + p6
 
-        sumarMatrices(p1, p2, M_01, dimension_2);           // M_01 = p1 + p2
+        sumarMatrices(p1, p2, M_01, dimension_2);       // M_01 = p1 + p2
 
-        sumarMatrices(p3, p4, M_10, dimension_2);           // M_10 = p3 + p4
+        sumarMatrices(p3, p4, M_10, dimension_2);       // M_10 = p3 + p4
 
         sumarMatrices(p1, p5, aux1, dimension_2);       // p1 + p5
-        restarMatrices(p3, p7, aux2, dimension_2);      // p3- p7
-        restarMatrices(aux1, aux2, M_11, dimension_2); // M_11 = p1 + p5 - p3 - p7
+        restarMatrices(aux1, p3, aux2, dimension_2);      // (p1 + p5 ) - p3
+        restarMatrices(aux2, p7, M_11, dimension_2);  // M_11 = (p1 + p5 - p3) - p7
 
         // Se agrupan los resultados en una matriz
         for (int i = 0; i < dimension_2; i++){
@@ -171,8 +171,8 @@ void modificarMatrices(vector<vector<int>>& M1, vector<vector<int>>& M2, int kn,
     strassen(M1_, M2_, M_resultante, kn);
     vector<int> temp1(kn);
     vector<vector<int>> M_final(kn, temp1);
-    for (unsigned int i = 0; i < kn; i++){
-        for (unsigned int j = 0; j < kn; j++){
+    for (int i = 0; i < kn; i++){
+        for (int j = 0; j < kn; j++){
             M_final[i][j] = M_resultante[i][j];
         }
     }
