@@ -1,4 +1,3 @@
-
 #include < iostream>
 #include < vector>
 #include < cmath>
@@ -6,11 +5,7 @@
 #include <cstdlib>
 using namespace std;
 
-int nextpowerof2(int k)
-{
-    return pow(2, int(ceil(log2(k))));
-}
-void display(vector< vector<int>>& matrix, int m, int n){
+void imprimir(vector< vector<int>>& matrix, int m, int n){
     for (int i = 0; i < m; i++){
         for (int j = 0; j < n; j++){
             if (j != 0){
@@ -22,183 +17,176 @@ void display(vector< vector<int>>& matrix, int m, int n){
     }
 }
 
-void add(vector<vector<int>>& A, vector<vector<int>>& B, vector<vector<int>>& C, int size)
-{
-    int i, j;
 
-    for (i = 0; i < size; i++)
-    {
-        for (j = 0; j < size; j++)
-        {
-            C[i][j] = A[i][j] + B[i][j];
-        }
-    }
-}
-
-void sub(vector<vector<int>>& A, vector<vector<int>>& B, vector<vector<int>>& C, int size)
-{
-    int i, j;
-
-    for (i = 0; i < size; i++)
-    {
-        for (j = 0; j < size; j++)
-        {
+void restarMatrices(vector<vector<int>>& A, vector<vector<int>>& B, vector<vector<int>>& C, int dimension) {
+    for (int i = 0; i < dimension; i++) {
+        for (int j = 0; j < dimension; j++) {
             C[i][j] = A[i][j] - B[i][j];
         }
     }
 }
 
-void STRASSEN_algorithmA(vector<vector<int>>& A, vector<vector<int>>& B, vector<vector<int>>& C, int size)
-{
-    //base case
-    if (size == 1)
-    {
-        C[0][0] = A[0][0] * B[0][0];
+void sumarMatrices(vector<vector<int>>& A, vector<vector<int>>& B, vector<vector<int>>& C, int dimension){
+    for (int i = 0; i < dimension; i++){
+        for (int j = 0; j < dimension; j++){
+            C[i][j] = A[i][j] + B[i][j];
+        }
+    }
+}
+
+
+
+void strassen(vector<vector<int>>& M1, vector<vector<int>>& M2, vector<vector<int>>& M_resultante, int dimension){
+
+    //cout << "entre a strassen" << endl;
+    //Caso base de la recursion
+    if (dimension == 1){
+        M_resultante[0][0] = M1[0][0] * M2[0][0];
         return;
-    }
-    else
-    {
-        int new_size = size / 2;
-        vector<int> z(new_size);
-        vector<vector<int>>
-            a11(new_size, z), a12(new_size, z), a21(new_size, z), a22(new_size, z),
-            b11(new_size, z), b12(new_size, z), b21(new_size, z), b22(new_size, z),
-            c11(new_size, z), c12(new_size, z), c21(new_size, z), c22(new_size, z),
-            p1(new_size, z), p2(new_size, z), p3(new_size, z), p4(new_size, z),
-            p5(new_size, z), p6(new_size, z), p7(new_size, z),
-            aResult(new_size, z), bResult(new_size, z);
+    }else{
+        //cout << "esoty en el else" << endl;
+        int dimension_2 = dimension / 2;
+        vector<int> aux(dimension_2);
+        vector<vector<int>> A(dimension_2, aux), B(dimension_2, aux), C(dimension_2, aux), D(dimension_2, aux),
+                            E(dimension_2, aux), F(dimension_2, aux), G(dimension_2, aux), H(dimension_2, aux),
+                            M_00(dimension_2, aux), M_01(dimension_2, aux), M_10(dimension_2, aux), M_11(dimension_2, aux),
+                            p1(dimension_2, aux), p2(dimension_2, aux), p3(dimension_2, aux), p4(dimension_2, aux),
+                            p5(dimension_2, aux), p6(dimension_2, aux), p7(dimension_2, aux),
+                            aux1(dimension_2, aux), aux2(dimension_2, aux);
 
-        int i, j;
+        //cout << "se crearon matrices" << endl;
+        //Se dividen las matrices en sub matrices
+        for (int i = 0; i < dimension_2; i++){
+            for (int j = 0; j < dimension_2; j++){
+                A[i][j] = M1[i][j];
+                B[i][j] = M1[i][j + dimension_2];
+                C[i][j] = M1[i + dimension_2][j];
+                D[i][j] = M1[i + dimension_2][j + dimension_2];
 
-        //dividing the matrices into sub-matrices:
-        for (i = 0; i < new_size; i++)
-        {
-            for (j = 0; j < new_size; j++)
-            {
-                a11[i][j] = A[i][j];
-                a12[i][j] = A[i][j + new_size];
-                a21[i][j] = A[i + new_size][j];
-                a22[i][j] = A[i + new_size][j + new_size];
-
-                b11[i][j] = B[i][j];
-                b12[i][j] = B[i][j + new_size];
-                b21[i][j] = B[i + new_size][j];
-                b22[i][j] = B[i + new_size][j + new_size];
+                E[i][j] = M2[i][j];
+                F[i][j] = M2[i][j + dimension_2];
+                G[i][j] = M2 [i + dimension_2] [j] ;
+                H[i][j] = M2[i + dimension_2][j + dimension_2];
+                //cout << "---------------" << endl;
             }
         }
 
-        // Calculating p1 to p7:
+        // Se calcula p1 a p7
+        restarMatrices(F, H, aux2, dimension_2);      // F - H
+        strassen(A, aux2, p1, dimension_2);          // p1 = (A) * (F - H)
 
-        add(a11, a22, aResult, new_size);     // a11 + a22
-        add(b11, b22, bResult, new_size);    // b11 + b22
-        STRASSEN_algorithmA(aResult, bResult, p1, new_size);
-        // p1 = (a11+a22) * (b11+b22)
+        sumarMatrices(A, B, aux1, dimension_2);      // A + B
+        strassen(aux1, H, p2, dimension_2);          // p2 = (A+B) * (H)
 
-        add(a21, a22, aResult, new_size); // a21 + a22
-        STRASSEN_algorithmA(aResult, b11, p2, new_size);
-        // p2 = (a21+a22) * (b11)
+        sumarMatrices(C, D, aux1, dimension_2);      // C + D
+        strassen(aux1, E, p3, dimension_2);          // p3 = (C+D) * (E)
 
-        sub(b12, b22, bResult, new_size);      // b12 - b22
-        STRASSEN_algorithmA(a11, bResult, p3, new_size);
-        // p3 = (a11) * (b12 - b22)
+        restarMatrices(G, E, aux2, dimension_2);     // G - E
+        strassen(D, aux2, p4, dimension_2);          // p4 = (D) * (G - E)
+        
+        sumarMatrices(A, D, aux1, dimension_2);      // A + D
+        sumarMatrices(E, H, aux2, dimension_2);      // E + H
+        strassen(aux1, aux2, p5, dimension_2);    // p5 = (A+D) * (E+H)
+        
+        restarMatrices(B, D, aux1, dimension_2);     // B - D
+        sumarMatrices(G, H, aux2, dimension_2);      // G + H
+        strassen(aux1, aux2, p6, dimension_2);    // p6 = (B-D) * (G+H)
+       
+        restarMatrices(C, A, aux1, dimension_2);     // C - A
+        sumarMatrices(E, F, aux2, dimension_2);      // E + F
+        strassen(aux1, aux2, p7, dimension_2);    // p7 = (C-A) * (E+F)
+        
 
-        sub(b21, b11, bResult, new_size);       // b21 - b11
-        STRASSEN_algorithmA(a22, bResult, p4, new_size);
-        // p4 = (a22) * (b21 - b11)
 
-        add(a11, a12, aResult, new_size);      // a11 + a12
-        STRASSEN_algorithmA(aResult, b22, p5, new_size);
-        // p5 = (a11+a12) * (b22)
 
-        sub(a21, a11, aResult, new_size);      // a21 - a11
-        add(b11, b12, bResult, new_size);
-        // b11 + b12
-        STRASSEN_algorithmA(aResult, bResult, p6, new_size);
-        // p6 = (a21-a11) * (b11+b12)
 
-        sub(a12, a22, aResult, new_size);      // a12 - a22
-        add(b21, b22, bResult, new_size);
-        // b21 + b22
-        STRASSEN_algorithmA(aResult, bResult, p7, new_size);
-        // p7 = (a12-a22) * (b21+b22)
+        // Calculando M_10, M_10, M_00 e M_11:
 
-        // calculating c21, c21, c11 e c22:
+        sumarMatrices(p5, p4, aux1, dimension_2);       // p5 + p4
+        sumarMatrices(p2, p6, aux2, dimension_2);       // p2 + p6
+        restarMatrices(aux1, aux2, M_00, dimension_2); // M_00 = p5 + p4 - p2 + p6
 
-        add(p3, p5, c12, new_size); // c12 = p3 + p5
-        add(p2, p4, c21, new_size); // c21 = p2 + p4
+        sumarMatrices(p1, p2, M_01, dimension_2);           // M_01 = p1 + p2
 
-        add(p1, p4, aResult, new_size);       // p1 + p4
-        add(aResult, p7, bResult, new_size);  // p1 + p4 + p7
-        sub(bResult, p5, c11, new_size); // c11 = p1 + p4 - p5 + p7
+        sumarMatrices(p3, p4, M_10, dimension_2);           // M_10 = p3 + p4
 
-        add(p1, p3, aResult, new_size);       // p1 + p3
-        add(aResult, p6, bResult, new_size);  // p1 + p3 + p6
-        sub(bResult, p2, c22, new_size); // c22 = p1 + p3 - p2 + p6
+        sumarMatrices(p1, p5, aux1, dimension_2);       // p1 + p5
+        restarMatrices(p3, p7, aux2, dimension_2);      // p3- p7
+        restarMatrices(aux1, aux2, M_11, dimension_2); // M_11 = p1 + p5 - p3 - p7
 
-        // Grouping the results obtained in a single matrix:
-        for (i = 0; i < new_size; i++)
-        {
-            for (j = 0; j < new_size; j++)
-            {
-                C[i][j] = c11[i][j];
-                C[i][j + new_size] = c12[i][j];
-                C[i + new_size][j] = c21[i][j];
-                C[i + new_size][j + new_size] = c22[i][j];
+        // Se agrupan los resultados en una matriz
+        for (int i = 0; i < dimension_2; i++){
+            for (int j = 0; j < dimension_2; j++){
+                M_resultante[i][j] = M_00[i][j];
+                M_resultante[i][j + dimension_2] = M_01[i][j];
+                M_resultante[i + dimension_2][j] = M_10[i][j];
+                M_resultante[i + dimension_2][j + dimension_2] = M_11[i][j];
             }
         }
     }
 }
-void STRASSEN_algorithm(vector<vector<int>>& A, vector<vector<int>>& B, int m, int n, int a, int b)
-{
-    /* Check to see if these matrices are already square and have dimensions of a power of 2. If not,
-     * the matrices must be resized and padded with zeroes to meet this criteria. */
-    int k = max({ m, n, a, b });
 
-    int s = nextpowerof2(k);
+// genera nuevas matrices rellenando con 0 en caso que sea necesario
+void modificarMatrices(vector<vector<int>>& M1, vector<vector<int>>& M2, int kn, int n){
 
-    vector<int> z(s);
-    vector<vector<int>> Aa(s, z), Bb(s, z), Cc(s, z);
+     // max es kn
 
-    for (unsigned int i = 0; i < m; i++)
-    {
-        for (unsigned int j = 0; j < n; j++)
-        {
-            Aa[i][j] = A[i][j];
+    //int s = nextpowerof2(kn);
+    //cout << " el valor de s es " << s << endl;
+    vector<int> arreglo_de_ceros(kn);
+    vector<vector<int>> M1_(kn, arreglo_de_ceros), M2_(kn, arreglo_de_ceros), M_resultante(kn, arreglo_de_ceros);
+
+    for (int i = 0; i < kn; i++){
+        for (int j = 0; j < n; j++){
+            M1_[i][j] = M1[i][j];
         }
     }
-    for (unsigned int i = 0; i < a; i++)
-    {
-        for (unsigned int j = 0; j < b; j++)
-        {
-            Bb[i][j] = B[i][j];
+
+    cout << "la nueva matriz es: " << endl;
+    for (int i = 0; i < kn; i++) {
+        cout << "\n";
+        for (int j = 0; j < kn; j++) {
+            //cout << "posicion: " << "[" << i << "]" << "[" << j << "]" << endl;
+            cout << M1_[i][j] << "\t";
         }
     }
-    STRASSEN_algorithmA(Aa, Bb, Cc, s);
-    vector<int> temp1(b);
-    vector<vector<int>> C(m, temp1);
-    for (unsigned int i = 0; i < m; i++)
-    {
-        for (unsigned int j = 0; j < b; j++)
-        {
-            C[i][j] = Cc[i][j];
+
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < kn; j++){
+            M2_[i][j] = M2[i][j];
         }
     }
-    display(C, m, b);
+
+    cout << "la nueva matriz es: " << endl;
+    for (int i = 0; i < kn; i++) {
+        cout << "\n";
+        for (int j = 0; j < kn; j++) {
+            //cout << "posicion: " << "[" << i << "]" << "[" << j << "]" << endl;
+            cout << M2_[i][j] << "\t";
+        }
+    }
+
+
+    cout << "la matriz resultante es: " << endl;
+    strassen(M1_, M2_, M_resultante, kn);
+    vector<int> temp1(kn);
+    vector<vector<int>> M_final(kn, temp1);
+    for (unsigned int i = 0; i < kn; i++){
+        for (unsigned int j = 0; j < kn; j++){
+            M_final[i][j] = M_resultante[i][j];
+        }
+    }
+
+    imprimir(M_final, kn, kn);
 }
 
-bool check(int n, int a)
-{
-    if (n == a)
-        return true;
-    else
-        return false;
-}
+
 
 int main()
 {
     int n, k, kn;
-    vector<vector<int>> A;
-    vector<vector<int>> B;
+    vector<vector<int>> M1;
+    vector<vector<int>> M2;
     cout << "Ingrese los valores de N y k respectivamente separados por un espacio" << endl;
     cin >> n >> k;
     kn = n * k;
@@ -213,14 +201,13 @@ int main()
         for (int j = 0; j < n; j++) {
             cin >> fila[j];
         }
-        A.push_back(fila);
+        M1.push_back(fila);
     }
 
     for (int i = 0; i < kn; i++) {
         cout << "\n"; 
         for (int j = 0; j < n; j++) {
-            //cout << "posicion: " << "[" << i << "]" << "[" << j << "]" << endl;
-            cout << A[i][j] << "\t";
+            cout << M1[i][j] << "\t";
         }
     }
 
@@ -233,26 +220,21 @@ int main()
         for (int j = 0; j < kn; j++) {
             cin >> fila[j];
         }
-        B.push_back(fila);
+        M2.push_back(fila);
     }
 
     for (int i = 0; i < n; i++) {
         cout << "\n";
         for (int j = 0; j < kn; j++) {
             //cout << "posicion: " << "[" << i << "]" << "[" << j << "]" << endl;
-            cout << B[i][j] << "\t";
+            cout << M2[i][j] << "\t";
         }
     }
 
-    //bool k = check(n, a);
-    //if (k)
-    //{
-    //    STRASSEN_algorithm(A, B, k, n, a, b);
-    //}
-    //else
-    //{
-    //    cout << "martrix multiplication not possible";
-    //}
+    modificarMatrices(M1, M2, kn, n);
+    
+  
+    
     return 0;
 }
 

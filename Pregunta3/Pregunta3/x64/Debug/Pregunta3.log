@@ -1,1 +1,4 @@
-﻿  Pregunta3.vcxproj -> C:\Users\jaime\Desktop\Tarea1_Algoritmos\Pregunta3\Pregunta3\x64\Debug\Pregunta3.exe
+﻿  Pregunta3.cpp
+C:\Users\jaime\Desktop\Tarea1_Algoritmos\Pregunta3\Pregunta3\Pregunta3.cpp(174,32): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\jaime\Desktop\Tarea1_Algoritmos\Pregunta3\Pregunta3\Pregunta3.cpp(175,36): warning C4018: '<': no coinciden signed/unsigned
+  Pregunta3.vcxproj -> C:\Users\jaime\Desktop\Tarea1_Algoritmos\Pregunta3\Pregunta3\x64\Debug\Pregunta3.exe
