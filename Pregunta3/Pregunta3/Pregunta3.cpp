@@ -1,11 +1,12 @@
 #include < iostream>
 #include < vector>
-#include < cmath>
-#include < algorithm>
 #include <cstdlib>
+#include < cmath>
 using namespace std;
 
+//muestra por pantalla el resultado esperado
 void imprimir(vector< vector<int>>& matriz, int m, int n){
+    cout << "[" << m << "]" << " X  [" << n << "]\n" << endl;
     for (int i = 0; i < m; i++){
         for (int j = 0; j < n; j++){
             if (j != 0){
@@ -17,7 +18,7 @@ void imprimir(vector< vector<int>>& matriz, int m, int n){
     }
 }
 
-
+//resta matrices
 void restarMatrices(vector<vector<int>>& A, vector<vector<int>>& B, vector<vector<int>>& C, int dimension) {
     for (int i = 0; i < dimension; i++) {
         for (int j = 0; j < dimension; j++) {
@@ -26,6 +27,7 @@ void restarMatrices(vector<vector<int>>& A, vector<vector<int>>& B, vector<vecto
     }
 }
 
+//suma matrices
 void sumarMatrices(vector<vector<int>>& A, vector<vector<int>>& B, vector<vector<int>>& C, int dimension){
     for (int i = 0; i < dimension; i++){
         for (int j = 0; j < dimension; j++){
@@ -35,16 +37,14 @@ void sumarMatrices(vector<vector<int>>& A, vector<vector<int>>& B, vector<vector
 }
 
 
-
+//Se realiza el algoritmo de Strassen
 void strassen(vector<vector<int>>& M1, vector<vector<int>>& M2, vector<vector<int>>& M_resultante, int dimension){
 
-    //cout << "entre a strassen" << endl;
     //Caso base de la recursion
     if (dimension == 1){
         M_resultante[0][0] = M1[0][0] * M2[0][0];
         return;
     }else{
-        //cout << "esoty en el else" << endl;
         int dimension_2 = dimension / 2;
         vector<int> aux(dimension_2);
         vector<vector<int>> A(dimension_2, aux), B(dimension_2, aux), C(dimension_2, aux), D(dimension_2, aux),
@@ -54,7 +54,6 @@ void strassen(vector<vector<int>>& M1, vector<vector<int>>& M2, vector<vector<in
                             p5(dimension_2, aux), p6(dimension_2, aux), p7(dimension_2, aux),
                             aux1(dimension_2, aux), aux2(dimension_2, aux);
 
-        //cout << "se crearon matrices" << endl;
         //Se dividen las matrices en sub matrices
         for (int i = 0; i < dimension_2; i++){
             for (int j = 0; j < dimension_2; j++){
@@ -67,7 +66,6 @@ void strassen(vector<vector<int>>& M1, vector<vector<int>>& M2, vector<vector<in
                 F[i][j] = M2[i][j + dimension_2];
                 G[i][j] = M2 [i + dimension_2] [j] ;
                 H[i][j] = M2[i + dimension_2][j + dimension_2];
-                //cout << "---------------" << endl;
             }
         }
 
@@ -96,12 +94,7 @@ void strassen(vector<vector<int>>& M1, vector<vector<int>>& M2, vector<vector<in
         sumarMatrices(E, F, aux2, dimension_2);      // E + F
         strassen(aux1, aux2, p7, dimension_2);    // p7 = (C-A) * (E+F)
         
-
-
-
-
         // Calculando M_10, M_10, M_00 e M_11:
-
         sumarMatrices(p5, p4, aux1, dimension_2);       // p5 + p4
         restarMatrices(aux1, p2, aux2, dimension_2);       // (p5 +p4) - p2
         sumarMatrices(aux2, p6, M_00, dimension_2); // M_00 = (p5 + p4 - p2) + p6
@@ -126,51 +119,53 @@ void strassen(vector<vector<int>>& M1, vector<vector<int>>& M2, vector<vector<in
     }
 }
 
-// genera nuevas matrices rellenando con 0 en caso que sea necesario
-void modificarMatrices(vector<vector<int>>& M1, vector<vector<int>>& M2, int kn, int n){
+//entrega la siguiente potencia de 2 para el algoritmo de strassen
+int potenciaDeDos(int kn){
+    int aux = ceil(log2(kn));
+    return pow(2, aux);
+}
+
+// genera nuevas matrices rellenando con 0 en caso que sea necesario e ingresa la dimension en potencia de 2 y luego llama la funcion strassen
+// para que aplique el algoritmo y muestra por consola a traves de la funcion imprimir el resultado de la multiplicacion de las matrices M1 y M2
+void modificarMatrices(vector<vector<int>>& M1, vector<vector<int>>& M2, int kn, int n, int opcion){
 
      // max es kn
-
-    //int s = nextpowerof2(kn);
-    //cout << " el valor de s es " << s << endl;
-    vector<int> arreglo_de_ceros(kn);
-    vector<vector<int>> M1_(kn, arreglo_de_ceros), M2_(kn, arreglo_de_ceros), M_resultante(kn, arreglo_de_ceros);
-
-    for (int i = 0; i < kn; i++){
-        for (int j = 0; j < n; j++){
-            M1_[i][j] = M1[i][j];
+    int kn_ = potenciaDeDos(kn);
+    vector<int> arreglo_de_ceros(kn_);
+    vector<vector<int>> M1_(kn_, arreglo_de_ceros), M2_(kn_, arreglo_de_ceros), M_resultante(kn_, arreglo_de_ceros);
+    if (opcion == 1) {
+    
+        for (int i = 0; i < kn; i++) {
+            for (int j = 0; j < n; j++) {
+                M1_[i][j] = M1[i][j];
+            }
+        }
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < kn; j++) {
+                M2_[i][j] = M2[i][j];
+            }
+        }
+    }
+    else {
+    
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < kn; j++) {
+                M1_[i][j] = M1[i][j];
+            }
+        }
+        for (int i = 0; i < kn; i++) {
+            for (int j = 0; j < n; j++) {
+                M2_[i][j] = M2[i][j];
+            }
         }
     }
 
-    cout << "la nueva matriz es: " << endl;
-    for (int i = 0; i < kn; i++) {
-        cout << "\n";
-        for (int j = 0; j < kn; j++) {
-            //cout << "posicion: " << "[" << i << "]" << "[" << j << "]" << endl;
-            cout << M1_[i][j] << "\t";
-        }
-    }
-
-    for (int i = 0; i < n; i++){
-        for (int j = 0; j < kn; j++){
-            M2_[i][j] = M2[i][j];
-        }
-    }
-
-    cout << "la nueva matriz es: " << endl;
-    for (int i = 0; i < kn; i++) {
-        cout << "\n";
-        for (int j = 0; j < kn; j++) {
-            //cout << "posicion: " << "[" << i << "]" << "[" << j << "]" << endl;
-            cout << M2_[i][j] << "\t";
-        }
-    }
 
 
     cout << "la matriz resultante es: " << endl;
-    strassen(M1_, M2_, M_resultante, kn);
-    vector<int> temp1(kn);
-    vector<vector<int>> M_final(kn, temp1);
+    strassen(M1_, M2_, M_resultante, kn_);
+    vector<int> m_final(kn);
+    vector<vector<int>> M_final(kn, m_final);
     for (int i = 0; i < kn; i++){
         for (int j = 0; j < kn; j++){
             M_final[i][j] = M_resultante[i][j];
@@ -180,61 +175,105 @@ void modificarMatrices(vector<vector<int>>& M1, vector<vector<int>>& M2, int kn,
     imprimir(M_final, kn, kn);
 }
 
-
-
-int main()
-{
-    int n, k, kn;
-    vector<vector<int>> M1;
-    vector<vector<int>> M2;
-    cout << "Ingrese los valores de N y k respectivamente separados por un espacio" << endl;
-    cin >> n >> k;
-    kn = n * k;
-    cout << "las dimensiones de la matriz son " << kn << " X " << n << endl;
-    cout << "Ingrese los valores de cada fila de la primera Matriz" << endl;
-    //cout << "el valor de n es " << n << endl;
-    //cout << "el valor de k es " << k << endl;
-    //cout << "el valor de kn es " << kn << endl; 
-    //Primera Matriz  
-    for (int i = 0; i < kn; i++) {
-        vector<int> fila(n);
-        for (int j = 0; j < n; j++) {
-            cin >> fila[j];
-        }
-        M1.push_back(fila);
+bool comprobarOpcion(int opcion) {
+    if (opcion == 1 || opcion == 2 || opcion == 3) {
+        return true;
     }
-
-    for (int i = 0; i < kn; i++) {
-        cout << "\n"; 
-        for (int j = 0; j < n; j++) {
-            cout << M1[i][j] << "\t";
-        }
+    else {
+        return false;
     }
+}
 
-    cout << "\n";
 
-    cout << "las dimensiones de la segunda matriz son " << n << " X " << kn << endl ;
-    //Segunda Matriz
-    for (int i = 0; i < n; i++) {
-        vector<int> fila(kn);
-        for (int j = 0; j < kn; j++) {
-            cin >> fila[j];
+
+
+int main(){
+
+    bool algoritmos = true;
+
+    while (algoritmos){
+        int opcion;
+        bool verificar;
+        cout << "Eliga el problema a resolver: \n" << endl;
+        cout << "1. Prbolema 1 \n" << endl;
+        cout << "2. Problema 2 \n" << endl;
+        cout << "3. Salir \n" << endl;
+        cin >> opcion;
+        verificar = comprobarOpcion(opcion);
+        if (verificar) {
+            if (opcion == 1) {
+                int n, k, kn;
+                vector<vector<int>> M1;
+                vector<vector<int>> M2;
+                cout << "Ingrese los valores de N y k respectivamente separados por un espacio" << endl;
+                cin >> n >> k;
+                kn = n * k;
+                cout << "las dimensiones de la matriz son " << kn << " X " << n << endl;
+                cout << "Ingrese los valores de cada fila separados por un espacio de la primera Matriz" << endl;
+                //Primera Matriz  
+                for (int i = 0; i < kn; i++) {
+                    vector<int> fila(n);
+                    for (int j = 0; j < n; j++) {
+                        cin >> fila[j];
+                    }
+                    M1.push_back(fila);
+                }
+
+                for (int i = 0; i < kn; i++) {
+                    cout << "\n";
+                    for (int j = 0; j < n; j++) {
+                        cout << M1[i][j] << "\t";
+                    }
+                }
+                cout << "las dimensiones de la matriz son " << n << " X " << kn << endl;
+                cout << "Ingrese los valores de cada fila separados por un espacio de la segunda Matriz" << endl;
+                //Segunda Matriz
+                for (int i = 0; i < n; i++) {
+                    vector<int> fila(kn);
+                    for (int j = 0; j < kn; j++) {
+                        cin >> fila[j];
+                    }
+                    M2.push_back(fila);
+                }
+                modificarMatrices(M1, M2, kn, n, opcion);
+            }
+            else if (opcion == 2) {
+                int n, k, kn;
+                vector<vector<int>> M1;
+                vector<vector<int>> M2;
+                cout << "Ingrese los valores de N y k respectivamente separados por un espacio" << endl;
+                cin >> n >> k;
+                kn = n * k;
+                cout << "las dimensiones de la matriz son " << n << " X " << kn << endl;
+                cout << "Ingrese los valores de cada fila separados por un espacio de la primera Matriz" << endl;
+                //Primera Matriz
+                for (int i = 0; i < n; i++) {
+                    vector<int> fila(kn);
+                    for (int j = 0; j < kn; j++) {
+                        cin >> fila[j];
+                    }
+                    M1.push_back(fila);
+                }
+                cout << "las dimensiones de la matriz son " << kn << " X " << n << endl;
+                cout << "Ingrese los valores de cada fila separados por un espacio de la segunda Matriz" << endl;
+                //Segunda Matriz
+                for (int i = 0; i < kn; i++) {
+                    vector<int> fila(n);
+                    for (int j = 0; j < n; j++) {
+                        cin >> fila[j];
+                    }
+                    M2.push_back(fila);
+                }
+                modificarMatrices(M1, M2, kn, n, opcion);
+            }
+            else {
+                algoritmos = false;
+            }
         }
-        M2.push_back(fila);
-    }
-
-    for (int i = 0; i < n; i++) {
-        cout << "\n";
-        for (int j = 0; j < kn; j++) {
-            //cout << "posicion: " << "[" << i << "]" << "[" << j << "]" << endl;
-            cout << M2[i][j] << "\t";
+        else {
+            cout << "Ingrese un numero dentro de las opciones.... \n" << endl;
         }
-    }
-
-    modificarMatrices(M1, M2, kn, n);
-    
-  
-    
+    }  
     return 0;
 }
 
